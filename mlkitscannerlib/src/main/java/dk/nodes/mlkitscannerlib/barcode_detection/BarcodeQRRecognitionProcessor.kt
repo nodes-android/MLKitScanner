@@ -1,40 +1,61 @@
-package dk.nodes.mlkitscannerlib.text_detection
+package dk.nodes.mlkitscannerlib.barcode_detection
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.common.FirebaseMLException
 import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.text.FirebaseVisionText
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
-
+import dk.nodes.mlkitscannerlib.text_detection.TextGraphic
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Processor for the text recognition demo.
- */
-class TextRecognitionProcessor {
+class BarcodeQRRecognitionProcessor {
 
-    private val detector: FirebaseVisionTextRecognizer
+    /**
+    The following formats are supported:
+
+    Code 128 (FORMAT_CODE_128)
+    Code 39 (FORMAT_CODE_39)
+    Code 93 (FORMAT_CODE_93)
+    Codabar (FORMAT_CODABAR)
+    EAN-13 (FORMAT_EAN_13)
+    EAN-8 (FORMAT_EAN_8)
+    ITF (FORMAT_ITF)
+    UPC-A (FORMAT_UPC_A)
+    UPC-E (FORMAT_UPC_E)
+    QR Code (FORMAT_QR_CODE)
+    PDF417 (FORMAT_PDF417)
+    Aztec (FORMAT_AZTEC)
+    Data Matrix (FORMAT_DATA_MATRIX)
+     */
+
+//    val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+//        .setBarcodeFormats(
+//            FirebaseVisionBarcode.FORMAT_QR_CODE,
+//            FirebaseVisionBarcode.FORMAT_AZTEC)
+//        .build()
+
+    val detector = FirebaseVision.getInstance().visionBarcodeDetector
+
+//    val imageToCheck = FirebaseVisionImage.fromBitmap(image)
 
     // Whether we should ignore process(). This is usually caused by feeding input data faster than
     // the model can handle.
     private val shouldThrottle = AtomicBoolean(false)
 
     init {
-        detector = FirebaseVision.getInstance().onDeviceTextRecognizer
     }
 
-
     //region ----- Exposed Methods -----
-
 
     fun stop() {
         try {
@@ -68,29 +89,34 @@ class TextRecognitionProcessor {
 
     //region ----- Helper Methods -----
 
-    protected fun detectInImage(image: FirebaseVisionImage): Task<FirebaseVisionText> {
-        return detector.processImage(image)
+    protected fun detectInImage(image: FirebaseVisionImage): Task<List<FirebaseVisionBarcode>> {
+        return detector.detectInImage(image)
     }
 
 
-    protected fun onSuccess(results: FirebaseVisionText, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
+    protected fun onSuccess(results: List<FirebaseVisionBarcode>, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
 
         graphicOverlay.clear()
 
-        val blocks = results.textBlocks
-
-        for (i in blocks.indices) {
-            val lines = blocks[i].lines
-            for (j in lines.indices) {
-                val elements = lines[j].elements
-                for (k in elements.indices) {
-                    val textGraphic = TextGraphic(graphicOverlay, elements[k])
-                    Log.d("TEXT_FROM_CAMERA", elements[k].text)
-                    graphicOverlay.add(textGraphic)
-
-                }
+        Log.d("BARCODE_SUCCESS", "HERE's YOUR BARCODE SIR! $results")
+        if (results.isNotEmpty()) {
+            results.first().rawValue?.let { barcodeString ->
+                Log.d("BARCODE_STRING", barcodeString)
             }
         }
+
+//        for (i in blocks.indices) {
+//            val lines = blocks[i].lines
+//            for (j in lines.indices) {
+//                val elements = lines[j].elements
+//                for (k in elements.indices) {
+//                    val textGraphic = TextGraphic(graphicOverlay, elements[k])
+//                    Log.d("TEXT_FROM_CAMERA", elements[k].text)
+//                    graphicOverlay.add(textGraphic)
+//
+//                }
+//            }
+//        }
     }
 
     protected fun onFailure(e: Exception) {
@@ -104,15 +130,15 @@ class TextRecognitionProcessor {
     ) {
 
         detectInImage(image)
-            .addOnSuccessListener { results ->
+            .addOnSuccessListener { result ->
                 shouldThrottle.set(false)
-                this@TextRecognitionProcessor.onSuccess(results, metadata, graphicOverlay)
+                this@BarcodeQRRecognitionProcessor.onSuccess(result, metadata, graphicOverlay)
             }
             .addOnFailureListener(
                 object : OnFailureListener {
                     override fun onFailure(e: Exception) {
                         shouldThrottle.set(false)
-                        this@TextRecognitionProcessor.onFailure(e)
+                        this@BarcodeQRRecognitionProcessor.onFailure(e)
                     }
                 })
         // Begin throttling until this frame of input has been processed, either in onSuccess or
@@ -124,8 +150,4 @@ class TextRecognitionProcessor {
 
         private val TAG = "TextRecProc"
     }
-
-    //endregion
-
-
 }

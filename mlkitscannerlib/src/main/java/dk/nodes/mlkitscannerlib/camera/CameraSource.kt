@@ -13,14 +13,20 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.WindowManager
 import com.google.android.gms.common.images.Size
+import dk.nodes.mlkitscannerlib.barcode_detection.BarcodeQRRecognitionProcessor
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import dk.nodes.mlkitscannerlib.text_detection.TextRecognitionProcessor
+import org.w3c.dom.Text
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+
+enum class ProcessorType {
+    Barcode, Text
+}
 
 /**
  * Manages the camera and allows UI updates on top of it (e.g. overlaying extra Graphics or
@@ -78,7 +84,9 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
 
     private val processorLock = Any()
     // @GuardedBy("processorLock")
-    private var frameProcessor: TextRecognitionProcessor? = null
+    private var textFrameProcessor: TextRecognitionProcessor? = null
+    private var barcodeFrameProcessor: BarcodeQRRecognitionProcessor? = null
+
 
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte buffer.
@@ -108,12 +116,12 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
             processingRunnable.release()
             cleanScreen()
 
-            frameProcessor?.let {
+            textFrameProcessor?.let {
                 it.stop()
             }
-//            if (frameProcessor != null) {
-//                frameProcessor!!.stop()
-//            }
+            barcodeFrameProcessor?.let {
+                it.stop()
+            }
         }
     }
 
@@ -409,13 +417,22 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
         }
     }
 
-    fun setMachineLearningFrameProcessor(processor: TextRecognitionProcessor) {
+    fun setMachineLearningFrameProcessor(processor: ProcessorType) {
         synchronized(processorLock) {
             cleanScreen()
-            frameProcessor?.let { processor ->
-                processor.stop()
+            if (processor == ProcessorType.Barcode) {
+                barcodeFrameProcessor = BarcodeQRRecognitionProcessor()
+                barcodeFrameProcessor?.let { processor ->
+                    processor.stop()
+                }
             }
-            frameProcessor = processor
+
+            if (processor == ProcessorType.Text) {
+                textFrameProcessor = TextRecognitionProcessor()
+                textFrameProcessor?.let { processor ->
+                    processor.stop()
+                }
+            }
         }
     }
 
@@ -548,7 +565,20 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
                 try {
                     synchronized(processorLock) {
                         Log.d(TAG, "Process an image")
-                        frameProcessor?.let { processor ->
+                        barcodeFrameProcessor?.let { processor ->
+                            processor.process(
+                                data,
+                                FrameMetadata.Builder()
+                                    .setWidth(previewSize!!.width)
+                                    .setHeight(previewSize!!.height)
+                                    .setRotation(rotation)
+                                    .setCameraFacing(cameraFacing)
+                                    .build(),
+                                graphicOverlay
+                            )
+                        }
+
+                        textFrameProcessor?.let { processor ->
                             processor.process(
                                 data,
                                 FrameMetadata.Builder()

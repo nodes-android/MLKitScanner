@@ -1,9 +1,6 @@
 package dk.nodes.mlkitscannerlib.text_detection
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 
@@ -16,6 +13,7 @@ class TextGraphic internal constructor(overlay: GraphicOverlay, private val text
 
     private val rectPaint: Paint
     private val textPaint: Paint
+    var bounds = Rect()
 
     init {
 

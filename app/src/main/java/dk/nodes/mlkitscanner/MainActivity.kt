@@ -3,8 +3,10 @@ package dk.nodes.mlkitscanner
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import dk.nodes.mlkitscannerlib.barcode_detection.BarcodeQRRecognitionProcessor
 import dk.nodes.mlkitscannerlib.camera.CameraSource
 import dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
+import dk.nodes.mlkitscannerlib.camera.ProcessorType
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import dk.nodes.mlkitscannerlib.text_detection.TextRecognitionProcessor
 import java.io.IOException
@@ -52,7 +54,8 @@ class MainActivity : AppCompatActivity() {
             cameraSource?.setFacing(CameraSource.CAMERA_FACING_BACK)
         }
 
-        cameraSource?.setMachineLearningFrameProcessor(TextRecognitionProcessor())
+        val type = ProcessorType.Text // Can be Text or Barcode
+        cameraSource?.setMachineLearningFrameProcessor(type)
     }
 
     private fun startCameraSource() {
