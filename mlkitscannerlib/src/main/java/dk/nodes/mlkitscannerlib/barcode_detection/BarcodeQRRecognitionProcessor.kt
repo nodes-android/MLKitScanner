@@ -1,19 +1,15 @@
 package dk.nodes.mlkitscannerlib.barcode_detection
 
-import android.graphics.Bitmap
 import android.util.Log
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.common.FirebaseMLException
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import com.google.firebase.ml.vision.text.FirebaseVisionText
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
-import dk.nodes.mlkitscannerlib.text_detection.TextGraphic
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
@@ -45,8 +41,6 @@ class BarcodeQRRecognitionProcessor {
 //        .build()
 
     val detector = FirebaseVision.getInstance().visionBarcodeDetector
-
-//    val imageToCheck = FirebaseVisionImage.fromBitmap(image)
 
     // Whether we should ignore process(). This is usually caused by feeding input data faster than
     // the model can handle.
