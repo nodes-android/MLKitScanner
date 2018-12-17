@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "55659467677",
+    "firebase_url": "https://mlkitscanner.firebaseio.com",
+    "project_id": "mlkitscanner",
+    "storage_bucket": "mlkitscanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55659467677:android:a466e59ebb013dc2",
+        "android_client_info": {
+          "package_name": "dk.nodes.mlkitscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "55659467677-fevh6kh7itp4r1msrgroopdho97pboo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYA4VA6WiYSd8A4RPGEdfiSXntvMOIPjA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
