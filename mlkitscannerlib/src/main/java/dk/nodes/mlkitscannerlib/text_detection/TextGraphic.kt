@@ -1,6 +1,7 @@
 package dk.nodes.mlkitscannerlib.text_detection
 
 import android.graphics.*
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 
