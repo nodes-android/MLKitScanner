@@ -8,6 +8,7 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import dk.nodes.mlkitscannerlib.other.Contract
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import java.io.IOException
@@ -42,12 +43,13 @@ class BarcodeQRRecognitionProcessor {
 
     val detector = FirebaseVision.getInstance().visionBarcodeDetector
 
+    var continueDetecting = true
+
+    var output: Contract.ProcessorOutput? = null
+
     // Whether we should ignore process(). This is usually caused by feeding input data faster than
     // the model can handle.
     private val shouldThrottle = AtomicBoolean(false)
-
-    init {
-    }
 
     //region ----- Exposed Methods -----
 
@@ -90,31 +92,16 @@ class BarcodeQRRecognitionProcessor {
 
     protected fun onSuccess(results: List<FirebaseVisionBarcode>, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
 
-        graphicOverlay.clear()
-
-        Log.d("BARCODE_SUCCESS", "HERE's YOUR BARCODE SIR! $results")
         if (results.isNotEmpty()) {
             results.first().rawValue?.let { barcodeString ->
-                Log.d("BARCODE_STRING", barcodeString)
+                output?.onScannerResult(barcodeString)
             }
         }
-
-//        for (i in blocks.indices) {
-//            val lines = blocks[i].lines
-//            for (j in lines.indices) {
-//                val elements = lines[j].elements
-//                for (k in elements.indices) {
-//                    val textGraphic = TextGraphic(graphicOverlay, elements[k])
-//                    Log.d("TEXT_FROM_CAMERA", elements[k].text)
-//                    graphicOverlay.add(textGraphic)
-//
-//                }
-//            }
-//        }
     }
 
     protected fun onFailure(e: Exception) {
-        Log.w(TAG, "Text detection failed.$e")
+        Log.w(TAG, "Barcode detection failed.$e")
+        output?.onScannerError(e.message)
     }
 
     private fun detectInVisionImage(
@@ -142,6 +129,6 @@ class BarcodeQRRecognitionProcessor {
 
     companion object {
 
-        private val TAG = "TextRecProc"
+        private val TAG = "BarcodeRecProc"
     }
 }

@@ -84,9 +84,8 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
 
     private val processorLock = Any()
     // @GuardedBy("processorLock")
-    private var textFrameProcessor: TextRecognitionProcessor? = null
-    private var barcodeFrameProcessor: BarcodeQRRecognitionProcessor? = null
-
+    var textFrameProcessor: TextRecognitionProcessor? = null
+    var barcodeFrameProcessor: BarcodeQRRecognitionProcessor? = null
 
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte buffer.

@@ -1,6 +1,7 @@
 package dk.nodes.mlkitscannerlib.activities
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -18,8 +19,9 @@ import android.os.Build
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.widget.Toast
+import dk.nodes.mlkitscannerlib.other.Contract
 
-class CameraActivity : AppCompatActivity() {
+class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
 
     private val PERMISSION_REQUEST_CODE = 200
 
@@ -49,8 +51,6 @@ class CameraActivity : AppCompatActivity() {
             graphicOverlay = findViewById<GraphicOverlay>(R.id.graphics_overlay)
         }
 
-
-
         //Check for, or ask for camera permissions
         if (checkPermission()) {
             startCamera()
@@ -58,10 +58,6 @@ class CameraActivity : AppCompatActivity() {
             requestPermission()
         }
 
-//        val returnIntent = Intent()
-//        returnIntent.putExtra("result", result)
-//        setResult(Activity.RESULT_OK, returnIntent)
-//        finish()
     }
 
     fun startCamera() {
@@ -84,6 +80,17 @@ class CameraActivity : AppCompatActivity() {
         if (cameraSource != null) {
             cameraSource?.release()
         }
+    }
+
+    override fun onScannerResult(result: String?) {
+        val returnIntent = Intent()
+        returnIntent.putExtra("result", result)
+        setResult(Activity.RESULT_OK, returnIntent)
+        finish()
+    }
+
+    override fun onScannerError(result: String?) {
+        Log.e(TAG, result)
     }
 
     private fun checkPermission(): Boolean {
@@ -143,6 +150,12 @@ class CameraActivity : AppCompatActivity() {
         }
 
         cameraSource?.setMachineLearningFrameProcessor(type)
+
+        when(type) {
+            ProcessorType.Barcode -> cameraSource?.barcodeFrameProcessor?.output = this
+            ProcessorType.Text -> cameraSource?.textFrameProcessor?.output = this
+        }
+
     }
 
     private fun startCameraSource() {
@@ -171,5 +184,6 @@ class CameraActivity : AppCompatActivity() {
             intent.putExtra("layoutId", layoutId)
             intent.putExtra("processorType", processorType)
         }
+
     }
 }
