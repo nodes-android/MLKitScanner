@@ -41,6 +41,8 @@ Basic setup could be like this:
 
 ##### Step 2) Set up the scanner in your Activity
 
+Change the ProcessorType to either .Barcode or .Text depending on what functionality you want.
+
 ```Kotlin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
