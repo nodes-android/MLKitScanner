@@ -61,7 +61,6 @@ class BarcodeQRRecognitionProcessor {
         }
     }
 
-
     @Throws(FirebaseMLException::class)
     fun process(data: ByteBuffer?, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
 
