@@ -6,19 +6,28 @@ import android.os.Bundle
 import dk.nodes.mlkitscannerlib.activities.CameraActivity
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
 import android.app.Activity
-
+import dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
+import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 
 
 class MainActivity : AppCompatActivity() {
+
+//    var preview: CameraSourcePreview? = null
+//    var graphicOverlay: GraphicOverlay? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val intent = Intent(this, CameraActivity::class.java)
-        CameraActivity.setup(intent, R.id.camera_source_preview, R.id.graphics_overlay, ProcessorType.Text)
-        startActivityForResult(intent, CameraActivity.requestCode)
 
+//        preview = findViewById<CameraSourcePreview>(R.id.camera_source_preview)
+//        graphicOverlay = findViewById<GraphicOverlay>(R.id.graphics_overlay)
+//        CameraActivity.setup(intent, null, null, ProcessorType.Text)
+
+        CameraActivity.setup(intent, R.id.camera_source_preview, R.id.graphics_overlay, ProcessorType.Text)
+
+        startActivityForResult(intent, CameraActivity.requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
