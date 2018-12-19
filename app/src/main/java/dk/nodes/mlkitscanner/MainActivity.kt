@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 //        graphicOverlay = findViewById<GraphicOverlay>(R.id.graphics_overlay)
 //        CameraActivity.setup(intent, null, null, ProcessorType.Text)
 
-        CameraActivity.setup(intent, R.id.camera_source_preview, R.id.graphics_overlay, ProcessorType.Text)
+        CameraActivity.setup(intent, R.id.camera_source_preview_main, R.id.graphics_overlay_main, R.layout.activity_main, ProcessorType.Text)
 
         startActivityForResult(intent, CameraActivity.requestCode)
     }

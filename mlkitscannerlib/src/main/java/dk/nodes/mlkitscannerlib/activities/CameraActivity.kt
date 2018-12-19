@@ -33,21 +33,29 @@ class CameraActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
 
-        val intent = intent
         val cameraSourcePreviewId = intent.getIntExtra("cameraSourcePreviewId", 0)
         val graphicOverlayId = intent.getIntExtra("graphicOverlayId", 0)
+        val layoutId = intent.getIntExtra("layoutId", 0)
         type = intent.getSerializableExtra("processorType") as ProcessorType
 
-        preview = findViewById<CameraSourcePreview>(cameraSourcePreviewId)
-        graphicOverlay = findViewById<GraphicOverlay>(graphicOverlayId)
+        if(layoutId != 0) {
+            setContentView(layoutId)
+            preview = findViewById<CameraSourcePreview>(cameraSourcePreviewId)
+            graphicOverlay = findViewById<GraphicOverlay>(graphicOverlayId)
+        } else {
+            setContentView(R.layout.activity_camera)
+            preview = findViewById<CameraSourcePreview>(R.id.camera_source_preview)
+            graphicOverlay = findViewById<GraphicOverlay>(R.id.graphics_overlay)
+        }
+
+
 
         //Check for, or ask for camera permissions
         if (checkPermission()) {
             startCamera()
         } else {
-            requestPermission();
+            requestPermission()
         }
 
 //        val returnIntent = Intent()
@@ -157,9 +165,10 @@ class CameraActivity : AppCompatActivity() {
     companion object {
         val requestCode = 9876
 
-        fun setup(intent: Intent, cameraSourcePreviewId: Int?, graphicOverlayId: Int?, processorType: ProcessorType) {
+        fun setup(intent: Intent, cameraSourcePreviewId: Int?, graphicOverlayId: Int?, layoutId: Int?, processorType: ProcessorType) {
             intent.putExtra("cameraSourcePreviewId", cameraSourcePreviewId)
             intent.putExtra("graphicOverlayId", graphicOverlayId)
+            intent.putExtra("layoutId", layoutId)
             intent.putExtra("processorType", processorType)
         }
     }
