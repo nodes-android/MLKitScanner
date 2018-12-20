@@ -29,6 +29,8 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
     var preview: CameraSourcePreview? = null
     var graphicOverlay: GraphicOverlay? = null
 
+    var finished = false
+
     var type = ProcessorType.Text // Can be Text or Barcode
 
     private val TAG = CameraActivity::class.java.simpleName.toString().trim { it <= ' ' }
@@ -83,10 +85,17 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
     }
 
     override fun onScannerResult(result: String?) {
-        val returnIntent = Intent()
-        returnIntent.putExtra("result", result)
-        setResult(Activity.RESULT_OK, returnIntent)
-        finish()
+
+        if (!finished) {
+            Log.e(TAG, "finishing with result")
+            finished = true
+
+            val returnIntent = Intent()
+            returnIntent.putExtra("result", result)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+        }
+
     }
 
     override fun onScannerError(result: String?) {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import dk.nodes.mlkitscannerlib.activities.CameraActivity
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
 import android.app.Activity
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +29,11 @@ class MainActivity : AppCompatActivity() {
             CameraActivity.setup(intent, R.id.custom_camera_source_preview, R.id.custom_graphics_overlay, R.layout.custom_camera_layout, scannerType)
             startActivityForResult(intent, CameraActivity.requestCode)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("MainActivity","we're back..")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

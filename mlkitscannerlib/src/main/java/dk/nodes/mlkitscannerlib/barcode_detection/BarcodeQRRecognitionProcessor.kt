@@ -62,11 +62,13 @@ class BarcodeQRRecognitionProcessor {
     }
 
     @Throws(FirebaseMLException::class)
-    fun process(data: ByteBuffer?, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
+    fun process(data: ByteBuffer?, frameMetadata: FrameMetadata) {
 
+        //Exit processing if throttling
         if (shouldThrottle.get()) {
             return
         }
+
         val metadata = FirebaseVisionImageMetadata.Builder()
             .setFormat(FirebaseVisionImageMetadata.IMAGE_FORMAT_NV21)
             .setWidth(frameMetadata.width)
@@ -75,7 +77,7 @@ class BarcodeQRRecognitionProcessor {
             .build()
 
         data?.let { byteData ->
-            detectInVisionImage(FirebaseVisionImage.fromByteBuffer(byteData, metadata), frameMetadata, graphicOverlay)
+            detectInVisionImage(FirebaseVisionImage.fromByteBuffer(byteData, metadata))
         }
 
     }
@@ -89,10 +91,11 @@ class BarcodeQRRecognitionProcessor {
     }
 
 
-    protected fun onSuccess(results: List<FirebaseVisionBarcode>, frameMetadata: FrameMetadata, graphicOverlay: GraphicOverlay) {
+    protected fun onSuccess(results: List<FirebaseVisionBarcode>) {
 
         if (results.isNotEmpty()) {
             results.first().rawValue?.let { barcodeString ->
+                Log.e(TAG, "onScannerResult - Got a barcode!")
                 output?.onScannerResult(barcodeString)
             }
         }
@@ -103,31 +106,28 @@ class BarcodeQRRecognitionProcessor {
         output?.onScannerError(e.message)
     }
 
-    private fun detectInVisionImage(
-        image: FirebaseVisionImage,
-        metadata: FrameMetadata,
-        graphicOverlay: GraphicOverlay
-    ) {
+    private fun detectInVisionImage(image: FirebaseVisionImage) {
+
+        // Begin throttling until this frame of input has been processed,
+        // either in onSuccess or onFailure.
+        shouldThrottle.set(true)
 
         detectInImage(image)
             .addOnSuccessListener { result ->
+                this@BarcodeQRRecognitionProcessor.onSuccess(result)
                 shouldThrottle.set(false)
-                this@BarcodeQRRecognitionProcessor.onSuccess(result, metadata, graphicOverlay)
             }
             .addOnFailureListener(
                 object : OnFailureListener {
                     override fun onFailure(e: Exception) {
-                        shouldThrottle.set(false)
                         this@BarcodeQRRecognitionProcessor.onFailure(e)
+                        shouldThrottle.set(false)
                     }
                 })
-        // Begin throttling until this frame of input has been processed, either in onSuccess or
-        // onFailure.
-        shouldThrottle.set(true)
+
     }
 
     companion object {
-
-        private val TAG = "BarcodeRecProc"
+        private val TAG = "BarcodeQRProcessor"
     }
 }

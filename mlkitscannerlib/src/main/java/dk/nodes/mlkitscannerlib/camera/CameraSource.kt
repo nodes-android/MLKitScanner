@@ -17,7 +17,6 @@ import dk.nodes.mlkitscannerlib.barcode_detection.BarcodeQRRecognitionProcessor
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import dk.nodes.mlkitscannerlib.text_detection.TextRecognitionProcessor
-import org.w3c.dom.Text
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
@@ -83,6 +82,7 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
     private val processingRunnable: FrameProcessingRunnable
 
     private val processorLock = Any()
+
     // @GuardedBy("processorLock")
     var textFrameProcessor: TextRecognitionProcessor? = null
     var barcodeFrameProcessor: BarcodeQRRecognitionProcessor? = null
@@ -489,10 +489,7 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
                 }
 
                 if (!bytesToByteBuffer.containsKey(data)) {
-                    Log.d(
-                        TAG,
-                        "Skipping frame. Could not find ByteBuffer associated with the image " + "data from the camera."
-                    )
+                    Log.d(TAG,"Skipping frame. Could not find ByteBuffer associated with the image " + "data from the camera.")
                     return
                 }
 
@@ -565,6 +562,7 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
                     synchronized(processorLock) {
                         Log.d(TAG, "Process an image")
                         barcodeFrameProcessor?.let { processor ->
+                            Log.e(TAG, "Before running '.process'")
                             processor.process(
                                 data,
                                 FrameMetadata.Builder()
@@ -572,8 +570,7 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
                                     .setHeight(previewSize!!.height)
                                     .setRotation(rotation)
                                     .setCameraFacing(cameraFacing)
-                                    .build(),
-                                graphicOverlay
+                                    .build()
                             )
                         }
 
