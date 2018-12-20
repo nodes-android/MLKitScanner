@@ -31,7 +31,7 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
 
     var finished = false
 
-    var type = ProcessorType.Text // Can be Text or Barcode
+    var type: ProcessorType? = null // Can be Text or Barcode
 
     private val TAG = CameraActivity::class.java.simpleName.toString().trim { it <= ' ' }
 
@@ -74,13 +74,9 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
 
     override fun onPause() {
         super.onPause()
-        preview?.stop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (cameraSource != null) {
-            cameraSource?.release()
+        preview?.let {
+            //Releases and stops the cameraSource
+            it.release()
         }
     }
 
@@ -89,13 +85,13 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
         if (!finished) {
             Log.e(TAG, "finishing with result")
             finished = true
-
             val returnIntent = Intent()
             returnIntent.putExtra("result", result)
             setResult(Activity.RESULT_OK, returnIntent)
-            finish()
-        }
 
+            finish()
+            Log.e(TAG, "****** AFTER FINISHED *******")
+        }
     }
 
     override fun onScannerError(result: String?) {
@@ -158,7 +154,9 @@ class CameraActivity: AppCompatActivity(), Contract.ProcessorOutput {
             cameraSource?.setFacing(CameraSource.CAMERA_FACING_BACK)
         }
 
-        cameraSource?.setMachineLearningFrameProcessor(type)
+        type?.let { processorType ->
+            cameraSource?.setMachineLearningFrameProcessor(processorType)
+        }
 
         when(type) {
             ProcessorType.Barcode -> cameraSource?.barcodeFrameProcessor?.output = this

@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.common.FirebaseMLException
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import dk.nodes.mlkitscannerlib.other.Contract
@@ -37,13 +38,12 @@ class BarcodeQRRecognitionProcessor {
 
 //    val options = FirebaseVisionBarcodeDetectorOptions.Builder()
 //        .setBarcodeFormats(
-//            FirebaseVisionBarcode.FORMAT_QR_CODE,
-//            FirebaseVisionBarcode.FORMAT_AZTEC)
+//            FirebaseVisionBarcode.FORMAT_EAN_13,
+//            FirebaseVisionBarcode.FORMAT_EAN_8)
 //        .build()
 
     val detector = FirebaseVision.getInstance().visionBarcodeDetector
-
-    var continueDetecting = true
+//    val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
 
     var output: Contract.ProcessorOutput? = null
 

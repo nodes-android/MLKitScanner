@@ -38,6 +38,8 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
     private var activity = activity
     private var camera: Camera? = null
 
+    private var running = true
+
     /**
      * Returns the selected camera; one of [.CAMERA_FACING_BACK] or [ ][.CAMERA_FACING_FRONT].
      */
@@ -81,7 +83,9 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
 
     private val processingRunnable: FrameProcessingRunnable
 
-    private val processorLock = Any()
+//    private val processorLock = Any()
+    private val processorLock = ReentrantLock()
+//    private val processorLockCondition = processorLock.newCondition()
 
     // @GuardedBy("processorLock")
     var textFrameProcessor: TextRecognitionProcessor? = null
@@ -110,9 +114,9 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
 
     /** Stops the camera and releases the resources of the camera and underlying detector.  */
     fun release() {
+
         synchronized(processorLock) {
             stop()
-            processingRunnable.release()
             cleanScreen()
 
             textFrameProcessor?.let {
@@ -139,6 +143,8 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
         if (camera != null) {
             return this
         }
+
+        running = true
 
         camera = createCamera()
         dummySurfaceTexture = SurfaceTexture(DUMMY_TEXTURE_NAME)
@@ -191,14 +197,17 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
      */
     @Synchronized
     fun stop() {
-        processingRunnable.setActive(false)
+//        processingRunnable.setActive(false)
+        processingRunnable.release()
+
+        running = false
 
         processingThread?.let { thread ->
             try {
                 // Wait for the thread to complete to ensure that we can't have multiple threads
                 // executing at the same time (i.e., which would happen if we called start too
                 // quickly after stop).
-                thread.join()
+                thread.join(50)
             } catch (e: InterruptedException) {
                 Log.d(TAG, "Frame processing thread interrupted on release.")
             }
@@ -521,7 +530,7 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
         override fun run() {
             var data: ByteBuffer? = null
 
-            while (true) {
+            while (running) {
                 synchronized(lock) {
                     while (active && pendingFrameData == null) {
                         try {
