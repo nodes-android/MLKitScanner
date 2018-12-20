@@ -6,12 +6,10 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.common.FirebaseMLException
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import dk.nodes.mlkitscannerlib.other.Contract
+import dk.nodes.mlkitscannerlib.contracts.Contract
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
-import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
@@ -46,6 +44,8 @@ class BarcodeQRRecognitionProcessor {
 //    val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
 
     var output: Contract.ProcessorOutput? = null
+
+    var result = ""
 
     // Whether we should ignore process(). This is usually caused by feeding input data faster than
     // the model can handle.
@@ -95,8 +95,12 @@ class BarcodeQRRecognitionProcessor {
 
         if (results.isNotEmpty()) {
             results.first().rawValue?.let { barcodeString ->
-                Log.e(TAG, "onScannerResult - Got a barcode!")
-                output?.onScannerResult(barcodeString)
+                if (barcodeString != result) {
+                    Log.e(TAG, "onScannerResult - Got a barcode! -> $barcodeString")
+                    result = barcodeString
+                    output?.onScannerResult(result)
+                }
+
             }
         }
     }

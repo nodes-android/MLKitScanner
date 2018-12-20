@@ -571,7 +571,6 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
                     synchronized(processorLock) {
                         Log.d(TAG, "Process an image")
                         barcodeFrameProcessor?.let { processor ->
-                            Log.e(TAG, "Before running '.process'")
                             processor.process(
                                 data,
                                 FrameMetadata.Builder()

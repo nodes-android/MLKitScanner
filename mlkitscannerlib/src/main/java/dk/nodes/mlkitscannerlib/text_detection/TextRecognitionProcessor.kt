@@ -2,7 +2,6 @@ package dk.nodes.mlkitscannerlib.text_detection
 
 import android.util.Log
 import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.common.FirebaseMLException
 import com.google.firebase.ml.vision.FirebaseVision
@@ -10,7 +9,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
-import dk.nodes.mlkitscannerlib.other.Contract
+import dk.nodes.mlkitscannerlib.contracts.Contract
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 
