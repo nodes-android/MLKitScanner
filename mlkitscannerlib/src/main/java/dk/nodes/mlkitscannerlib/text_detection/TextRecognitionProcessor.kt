@@ -9,7 +9,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
-import dk.nodes.mlkitscannerlib.contracts.Contract
+import dk.nodes.mlkitscannerlib.contracts.MLKitScannerLibContract
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 
@@ -32,7 +32,7 @@ class TextRecognitionProcessor {
         detector = FirebaseVision.getInstance().onDeviceTextRecognizer
     }
 
-    var output: Contract.ProcessorOutput? = null
+    var output: MLKitScannerLibContract.ProcessorOutput? = null
 
     //region ----- Exposed Methods -----
 

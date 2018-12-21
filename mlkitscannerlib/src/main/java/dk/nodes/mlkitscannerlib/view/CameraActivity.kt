@@ -1,28 +1,15 @@
 package dk.nodes.mlkitscannerlib.view
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import dk.nodes.mlkitscannerlib.R
-import dk.nodes.mlkitscannerlib.camera.CameraSource
-import dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
-import dk.nodes.mlkitscannerlib.other.GraphicOverlay
-import java.io.IOException
-import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
-import android.support.v4.app.ActivityCompat
-import android.os.Build
-import android.content.DialogInterface
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.widget.Toast
-import dk.nodes.mlkitscannerlib.contracts.Contract
+import dk.nodes.mlkitscannerlib.contracts.MLKitScannerLibContract
 
-class CameraActivity: AppCompatActivity(), Contract.FragmentOutput {
+class CameraActivity: AppCompatActivity(), MLKitScannerLibContract.CameraFragmentOutput {
 
     var finished = false
 
@@ -40,7 +27,7 @@ class CameraActivity: AppCompatActivity(), Contract.FragmentOutput {
         fragment.output = this
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.container, fragment, "SOMETHING")
+            .add(R.id.cameraContainer, fragment, "SOMETHING")
             .commit()
     }
 

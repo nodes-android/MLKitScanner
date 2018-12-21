@@ -20,12 +20,12 @@ import dk.nodes.mlkitscannerlib.R
 import dk.nodes.mlkitscannerlib.camera.CameraSource
 import dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
-import dk.nodes.mlkitscannerlib.contracts.Contract
+import dk.nodes.mlkitscannerlib.contracts.MLKitScannerLibContract
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
 import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.IOException
 
-class CameraFragment : Fragment(), Contract.ProcessorOutput {
+class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     private val PERMISSION_REQUEST_CODE = 200
     private val PROCESSOR_TYPE = "PROCESSOR_TYPE"
@@ -35,7 +35,7 @@ class CameraFragment : Fragment(), Contract.ProcessorOutput {
     var preview: CameraSourcePreview? = null
     var graphicOverlay: GraphicOverlay? = null
 
-    var output: Contract.FragmentOutput? = null
+    var output: MLKitScannerLibContract.CameraFragmentOutput? = null
 
     var type: ProcessorType? = null // Can be Text or Barcode
 //    var useDefaultLayout = true
@@ -93,7 +93,7 @@ class CameraFragment : Fragment(), Contract.ProcessorOutput {
     override fun onScannerResult(result: String?) {
 
         Log.e(TAG, "*** Got a result in fragment! ***")
-        outputTV.text = result
+//        outputTV.text = result
 
         output?.let {
             it.onScannerResult(result)

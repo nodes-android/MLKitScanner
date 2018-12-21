@@ -8,7 +8,7 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import dk.nodes.mlkitscannerlib.contracts.Contract
+import dk.nodes.mlkitscannerlib.contracts.MLKitScannerLibContract
 import dk.nodes.mlkitscannerlib.other.FrameMetadata
 import java.io.IOException
 import java.nio.ByteBuffer
@@ -43,7 +43,7 @@ class BarcodeQRRecognitionProcessor {
     val detector = FirebaseVision.getInstance().visionBarcodeDetector
 //    val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
 
-    var output: Contract.ProcessorOutput? = null
+    var output: MLKitScannerLibContract.ProcessorOutput? = null
 
     var result = ""
 
