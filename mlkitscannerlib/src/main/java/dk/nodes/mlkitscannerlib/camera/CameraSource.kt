@@ -83,8 +83,8 @@ class CameraSource(activity: Activity, private val graphicOverlay: GraphicOverla
 
     private val processingRunnable: FrameProcessingRunnable
 
-//    private val processorLock = Any()
-    private val processorLock = ReentrantLock()
+    private val processorLock = Any()
+//    private val processorLock = ReentrantLock()
 //    private val processorLockCondition = processorLock.newCondition()
 
     // @GuardedBy("processorLock")

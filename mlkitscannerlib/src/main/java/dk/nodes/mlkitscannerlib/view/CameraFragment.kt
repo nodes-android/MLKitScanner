@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.google.firebase.FirebaseApp
 
 import dk.nodes.mlkitscannerlib.R
 import dk.nodes.mlkitscannerlib.camera.CameraSource
@@ -22,7 +23,6 @@ import dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
 import dk.nodes.mlkitscannerlib.contracts.MLKitScannerLibContract
 import dk.nodes.mlkitscannerlib.other.GraphicOverlay
-import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.IOException
 
 class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
@@ -41,10 +41,11 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 //    var useDefaultLayout = true
 //    var listener: TYPE? = null
 
-    private val TAG = CameraActivity::class.java.simpleName.toString().trim { it <= ' ' }
+    private val TAG = CameraFragment::class.java.simpleName.toString().trim { it <= ' ' }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             type = it.getSerializable(PROCESSOR_TYPE) as ProcessorType
 //            useDefaultLayout = it.getBoolean(LAYOUT_DECIDER)
@@ -92,7 +93,7 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     override fun onScannerResult(result: String?) {
 
-        Log.e(TAG, "*** Got a result in fragment! ***")
+        Log.e(TAG, "*** Got a result in CameraFragment! ***")
 //        outputTV.text = result
 
         output?.let {
@@ -199,10 +200,11 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     companion object {
         @JvmStatic
-        fun newInstance(processorType: ProcessorType, useDefaultLayout: Boolean) =
+        fun newInstance(processorType: ProcessorType, outputReciever: MLKitScannerLibContract.CameraFragmentOutput) =
             CameraFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(PROCESSOR_TYPE, processorType)
+                    output = outputReciever
 //                    putBoolean(LAYOUT_DECIDER, useDefaultLayout)
                 }
             }

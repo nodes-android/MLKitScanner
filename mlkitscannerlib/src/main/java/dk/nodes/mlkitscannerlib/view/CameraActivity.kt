@@ -23,8 +23,7 @@ class CameraActivity: AppCompatActivity(), MLKitScannerLibContract.CameraFragmen
 
         type = intent.getSerializableExtra("processorType") as ProcessorType
 
-        val fragment = CameraFragment.newInstance(type!!, false)
-        fragment.output = this
+        val fragment = CameraFragment.newInstance(type!!, this)
 
         supportFragmentManager.beginTransaction()
             .add(R.id.cameraContainer, fragment, "SOMETHING")

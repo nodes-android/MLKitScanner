@@ -57,7 +57,7 @@ class BarcodeQRRecognitionProcessor {
         try {
             detector.close()
         } catch (e: IOException) {
-            Log.e(TAG, "Exception thrown while trying to close Text Detector: $e")
+            Log.e(TAG, "Exception thrown while trying to close Detector: $e")
         }
     }
 
