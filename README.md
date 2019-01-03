@@ -15,13 +15,45 @@ The libray is written in Kotlin, and is still under construction. For now it's p
 
 There's only a couple of steps to set up the scanner.
 
-##### Step 1) Create layout files, unless you wanna use the default
+##### Step 1) Install the library
 
-Basic setup could be like this:
+##### Step 2) Set up Firebase in your project
+
+Follow the instructions here: https://firebase.google.com/docs/android/setup
+
+- Make sure to copy the Google-Service.json file to your project and add classpath 'com.google.gms:google-services:4.0.1' in project dependencies
+
+##### Step 3a - fragment)
+
+Create a FrameLayout:
+
+```XML
+<FrameLayout
+    android:id="@+id/barcodeCameraContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy"
+    android:layout_weight="1"/>
+```
+
+```
+val fragment = CameraFragment.newInstance(ProcessorType.Barcode, this)
+
+activity.supportFragmentManager
+        .beginTransaction()
+        .add(R.id.barcodeCameraContainer, fragment, "BARCODE_SCANNER_FRAGMENT")
+        .commit()
+```
+
+Extend your fragment with `MLKitScannerLibContract.CameraFragmentOutput` to get `onScannerResult` and `onScannerError` functions.
+
+##### Step 3b - activity)
+
+Create a custom layout:
 
 ```XML
     <dk.nodes.mlkitscannerlib.camera.CameraSourcePreview
-            android:id="@+id/camera_source_preview_main"
+            android:id="@+id/custom_camera_source_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
@@ -34,25 +66,37 @@ Basic setup could be like this:
             app:layout_constraintTop_toTopOf="parent">
 
         <dk.nodes.mlkitscannerlib.other.GraphicOverlay
-                android:id="@+id/graphics_overlay_main"
+                android:id="@+id/custom_graphics_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
+    </dk.nodes.mlkitscannerlib.camera.CameraSourcePreview>
 ```
 
-##### Step 2) Set up the scanner in your Activity
+Or use the default layout.
 
-Change the ProcessorType to either .Barcode or .Text depending on what functionality you want.
+```
+val intent = Intent(this, CameraActivity::class.java)
 
-```Kotlin
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//CameraActivity.setup(intent, null, null, null, ProcessorType.Barcode) //This will default to CameraActivity's layout.
+CameraActivity.setup(intent, R.id.custom_camera_source_preview, R.id.custom_graphics_overlay, R.layout.custom_camera_layout, scannerType)
 
-        val intent = Intent(this, CameraActivity::class.java)
-//      CameraActivity.setup(intent, null, null, null, ProcessorType.Text) //This will default to CameraActivity's layout.
-        CameraActivity.setup(intent, R.id.camera_source_preview_main, R.id.graphics_overlay_main, R.layout.activity_main, ProcessorType.Barcode)
-        startActivityForResult(intent, CameraActivity.requestCode)
-    }
+startActivityForResult(intent, CameraActivity.requestCode)
+```
+
+```
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+   if (requestCode == CameraActivity.requestCode) {
+       if (resultCode == Activity.RESULT_OK) {
+           val result = data?.getStringExtra("result")
+                
+       }
+       if (resultCode == Activity.RESULT_CANCELED) {
+
+       }
+   }
+}
 ```
 
 This library is still under progress, but feel free to use it as you want to
