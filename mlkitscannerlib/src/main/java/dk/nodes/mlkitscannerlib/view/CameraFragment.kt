@@ -38,8 +38,6 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     var output: MLKitScannerLibContract.CameraFragmentOutput? = null
 
     var type: ProcessorType? = null // Can be Text or Barcode
-//    var useDefaultLayout = true
-//    var listener: TYPE? = null
 
     private val TAG = CameraFragment::class.java.simpleName.toString().trim { it <= ' ' }
 
@@ -48,7 +46,6 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
         arguments?.let {
             type = it.getSerializable(PROCESSOR_TYPE) as ProcessorType
-//            useDefaultLayout = it.getBoolean(LAYOUT_DECIDER)
         }
     }
 
@@ -61,8 +58,8 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        preview = view?.findViewById<CameraSourcePreview>(R.id.camera_source_preview)
-        graphicOverlay = view?.findViewById<GraphicOverlay>(R.id.graphics_overlay)
+        preview = view.findViewById(R.id.camera_source_preview)
+        graphicOverlay = view.findViewById(R.id.graphics_overlay)
 
         //Check for, or ask for camera permissions
         if (checkPermission()) {
@@ -80,13 +77,10 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     override fun onDetach() {
         super.onDetach()
-        preview?.let {
-            //Releases and stops the cameraSource
-            it.release()
-        }
+        preview?.release()
     }
 
-    fun startCamera() {
+    private fun startCamera() {
         createCameraSource()
         startCameraSource()
     }
@@ -94,11 +88,8 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     override fun onScannerResult(result: String?) {
 
         Log.e(TAG, "*** Got a result in CameraFragment! ***")
-//        outputTV.text = result
 
-        output?.let {
-            it.onScannerResult(result)
-        }
+        output?.onScannerResult(result)
     }
 
     override fun onScannerError(result: String?) {
@@ -127,7 +118,7 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            PERMISSION_REQUEST_CODE -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(activity?.applicationContext, "Permission Granted", Toast.LENGTH_SHORT).show()
                 startCamera()
             } else {
@@ -161,7 +152,7 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
         }
     }
 
-    fun createCameraSource() {
+    private fun createCameraSource() {
 
         if (cameraSource == null) {
             activity?.let { parentActivity ->
@@ -200,12 +191,11 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     companion object {
         @JvmStatic
-        fun newInstance(processorType: ProcessorType, outputReciever: MLKitScannerLibContract.CameraFragmentOutput) =
+        fun newInstance(processorType: ProcessorType, outputReceiver: MLKitScannerLibContract.CameraFragmentOutput) =
             CameraFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(PROCESSOR_TYPE, processorType)
-                    output = outputReciever
-//                    putBoolean(LAYOUT_DECIDER, useDefaultLayout)
+                    output = outputReceiver
                 }
             }
     }

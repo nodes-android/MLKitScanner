@@ -10,8 +10,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <application>
-        <activity android:name=".view.CameraActivity">
-        </activity>
+        <activity android:name=".view.CameraActivity"/>
     </application>
 
 </manifest>
