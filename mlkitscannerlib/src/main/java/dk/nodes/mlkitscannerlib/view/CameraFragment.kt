@@ -49,9 +49,7 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
@@ -68,7 +66,6 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
         } else {
             requestPermission()
         }
-
     }
 
     override fun onAttach(context: Context) {
@@ -87,7 +84,6 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     }
 
     override fun onScannerResult(result: String?) {
-
         Log.e(TAG, "*** Got a result in CameraFragment! ***")
 
         output?.onScannerResult(result)
@@ -190,23 +186,18 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
                 if (preview == null) {
                     Log.d(TAG, "resume: Preview is null")
                 }
-
                 preview?.start(cameraSource)
             } catch (e: IOException) {
                 Log.e(TAG, "Unable to start camera source.", e)
                 cameraSource?.release()
                 cameraSource = null
             }
-
         }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(
-            processorType: ProcessorType,
-            outputReceiver: MLKitScannerLibContract.CameraFragmentOutput
-        ) =
+        fun newInstance(processorType: ProcessorType, outputReceiver: MLKitScannerLibContract.CameraFragmentOutput) =
             CameraFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(PROCESSOR_TYPE, processorType)
