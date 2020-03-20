@@ -50,7 +50,8 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
@@ -100,41 +101,54 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     private fun checkPermission(): Boolean {
         return when {
-            (ContextCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) -> false
+            (ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED) -> false
             else -> true
         }
     }
 
     private fun requestPermission() {
-        activity?.let { parentActivity ->
-            ActivityCompat.requestPermissions(
-                parentActivity,
-                arrayOf(Manifest.permission.CAMERA),
-                PERMISSION_REQUEST_CODE
-            )
-        }
-
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            PERMISSION_REQUEST_CODE
+        )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
-            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(activity?.applicationContext, "Permission Granted", Toast.LENGTH_SHORT).show()
-                startCamera()
-            } else {
-                Toast.makeText(activity?.applicationContext, "Permission Denied", Toast.LENGTH_SHORT).show()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(
-                            context!!,
-                            Manifest.permission.CAMERA
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        showMessageOKCancel("You need to allow access permissions",
-                            DialogInterface.OnClickListener { dialog, which ->
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    requestPermission()
-                                }
-                            })
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Permission Granted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    startCamera()
+                } else {
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Permission Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(
+                                context!!,
+                                Manifest.permission.CAMERA
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            showMessageOKCancel("You need to allow access permissions",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        requestPermission()
+                                    }
+                                })
+                        }
                     }
                 }
             }
@@ -153,7 +167,6 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
     }
 
     private fun createCameraSource() {
-
         if (cameraSource == null) {
             activity?.let { parentActivity ->
                 cameraSource = CameraSource(parentActivity, graphicOverlay!!)
@@ -165,11 +178,10 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
             cameraSource?.setMachineLearningFrameProcessor(processorType)
         }
 
-        when(type) {
+        when (type) {
             ProcessorType.Barcode -> cameraSource?.barcodeFrameProcessor?.output = this
             ProcessorType.Text -> cameraSource?.textFrameProcessor?.output = this
         }
-
     }
 
     private fun startCameraSource() {
@@ -191,7 +203,10 @@ class CameraFragment : Fragment(), MLKitScannerLibContract.ProcessorOutput {
 
     companion object {
         @JvmStatic
-        fun newInstance(processorType: ProcessorType, outputReceiver: MLKitScannerLibContract.CameraFragmentOutput) =
+        fun newInstance(
+            processorType: ProcessorType,
+            outputReceiver: MLKitScannerLibContract.CameraFragmentOutput
+        ) =
             CameraFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(PROCESSOR_TYPE, processorType)
