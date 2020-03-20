@@ -1,7 +1,7 @@
 package dk.nodes.mlkitscanner
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dk.nodes.mlkitscannerlib.view.CameraActivity
 import dk.nodes.mlkitscannerlib.camera.ProcessorType
